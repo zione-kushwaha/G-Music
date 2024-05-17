@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:just_audio/just_audio.dart';
+import 'package:lecle_flutter_absolute_path/lecle_flutter_absolute_path.dart';
 
 
 
@@ -344,13 +345,12 @@ void delete_song(SongModel song) async {
 void changeSongTitle(SongModel song, String newTitle) async {
   try {
     const platform = MethodChannel('com.example.myapp/ringtone');
+    
     final bool success = await platform.invokeMethod('changeSongTitle', {'uri': song.uri, 'newTitle': newTitle});
     if (success) {
-      
-      notifyListeners();
-      print('song title changed successfully');
+      print('Successfully changed song title');
     } else {
-      print('failed to change song title');
+      print('Failed to change song title');
     }
   } on PlatformException catch (e) {
     print('Failed to change song title: ${e.message}');
@@ -373,5 +373,8 @@ void changeSongTitle(SongModel song, String newTitle) async {
     return _songs.where((element) => element.genre == genre.genre).toList();
   }
 }
+
+
+
 
 

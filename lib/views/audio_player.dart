@@ -2,13 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:music/constants.dart';
-
 import 'package:music/providers/SongProvider.dart';
-
 import 'package:music/views/Individual_song.dart';
-
 import 'package:on_audio_query/on_audio_query.dart';
-
 import 'package:provider/provider.dart';
 
 class AudioPlayerss extends StatefulWidget {
@@ -40,7 +36,8 @@ class _AudioPlayerssState extends State<AudioPlayerss> {
       future: loadSongsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator(
+          return Center(
+              child: CircularProgressIndicator(
             color: ui_color,
           ));
         } else {

@@ -440,9 +440,10 @@ class song_detail extends StatelessWidget {
               child: Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 // code to rename the song
                 if(controller.text.isNotEmpty){
+                  
                 Provider.of<SongProvier>(context,listen: false).changeSongTitle(song, controller.text);
               }else{
                 return;

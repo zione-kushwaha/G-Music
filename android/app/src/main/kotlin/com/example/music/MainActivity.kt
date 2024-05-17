@@ -1,19 +1,21 @@
 package com.example.music
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.content.ContentUris
+import android.content.ContentValues
 import android.content.Intent
+import android.database.Cursor
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
-import android.provider.Settings
-import android.database.Cursor
 import android.provider.MediaStore
-import android.content.pm.PackageManager
+import android.provider.Settings
 import android.util.Log
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.plugin.common.MethodChannel
-import android.content.ContentValues
 
 class MainActivity : FlutterActivity() {
     private val CHANNEL = "com.example.myapp/ringtone"
@@ -47,16 +49,7 @@ class MainActivity : FlutterActivity() {
                         result.error("INVALID_URI", "The URI is null.", null)
                     }
                 }
-                "changeSongTitle" -> {
-                    val uriString = call.argument<String>("uri")
-                    val newTitle = call.argument<String>("newTitle")
-                    if (uriString != null && newTitle != null) {
-                        val success = changeSongTitle(uriString, newTitle)
-                        result.success(success)
-                    } else {
-                        result.error("INVALID_ARGUMENTS", "The URI or new title is null.", null)
-                    }
-                }
+               
                 "requestWriteSettingsPermission" -> {
                     requestWriteSettingsPermission()
                     result.success(null)
@@ -122,56 +115,6 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    private fun changeSongTitle(uriString: String, newTitle: String): Boolean {
-        if (!hasWriteExternalStoragePermission()) {
-            Log.e("MainActivity", "Write external storage permission is required.")
-            requestStoragePermissions()
-            return false
-        }
-
-        val uri = Uri.parse(uriString)
-        val id = uri.lastPathSegment?.toLongOrNull()
-        if (id != null) {
-            val contentUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id)
-            Log.d("MainActivity", "Content URI: $contentUri")
-
-            val values = ContentValues().apply {
-                put(MediaStore.Audio.Media.TITLE, newTitle)
-            }
-
-            val rowsUpdated = contentResolver.update(contentUri, values, null, null)
-            if (rowsUpdated > 0) {
-                Log.d("MainActivity", "Successfully updated song title.")
-                return true
-            } else {
-                Log.e("MainActivity", "Failed to update song title. Rows updated: $rowsUpdated")
-                return false
-            }
-        } else {
-            Log.e("MainActivity", "Invalid URI: $uri")
-            return false
-        }
-    }
-
-    private fun getAlbumArt(uriString: String): Uri? {
-        val uri = Uri.parse(uriString)
-        val id = uri.lastPathSegment?.toLongOrNull()
-        if (id != null) {
-            val contentUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id)
-            val cursor: Cursor? = contentResolver.query(contentUri, arrayOf(MediaStore.Audio.Albums.ALBUM_ART), null, null, null)
-            if (cursor?.moveToFirst() == true) {
-                val albumArtUriString = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART))
-                cursor.close()
-                return Uri.parse(albumArtUriString)
-            } else {
-                Log.e("MainActivity", "Failed to get album art. Cursor is null or empty.")
-                cursor?.close()
-            }
-        } else {
-            Log.e("MainActivity", "Invalid URI: $uri")
-        }
-        return null
-    }
 
     private fun hasWriteExternalStoragePermission(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
