@@ -2,10 +2,9 @@
 
 import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:music/providers/SongProvider.dart';
 import 'package:music/constants.dart';
 import 'package:music/views/search_screen.dart';

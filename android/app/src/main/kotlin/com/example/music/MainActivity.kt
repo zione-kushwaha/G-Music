@@ -1,11 +1,10 @@
 package com.example.music
 
 import android.Manifest
-import android.content.pm.PackageManager
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Intent
-import android.database.Cursor
+import android.content.pm.PackageManager
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
@@ -23,6 +22,7 @@ class MainActivity : FlutterActivity() {
 
     companion object {
         const val WRITE_SETTINGS_REQUEST_CODE = 200
+        const val STORAGE_PERMISSION_REQUEST_CODE = 201
     }
 
     override fun configureFlutterEngine(flutterEngine: io.flutter.embedding.engine.FlutterEngine) {
@@ -49,7 +49,7 @@ class MainActivity : FlutterActivity() {
                         result.error("INVALID_URI", "The URI is null.", null)
                     }
                 }
-               
+              
                 "requestWriteSettingsPermission" -> {
                     requestWriteSettingsPermission()
                     result.success(null)
@@ -99,6 +99,8 @@ class MainActivity : FlutterActivity() {
         }
     }
 
+  
+
     private fun hasWriteSettingsPermission(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Settings.System.canWrite(this)
@@ -115,10 +117,10 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-
     private fun hasWriteExternalStoragePermission(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
         } else {
             true
         }
@@ -126,7 +128,10 @@ class MainActivity : FlutterActivity() {
 
     private fun requestStoragePermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), WRITE_SETTINGS_REQUEST_CODE)
+            ActivityCompat.requestPermissions(this, arrayOf(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ), STORAGE_PERMISSION_REQUEST_CODE)
         }
     }
 
@@ -135,8 +140,15 @@ class MainActivity : FlutterActivity() {
         when (requestCode) {
             WRITE_SETTINGS_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("MainActivity", "Storage permissions granted.")
+                    Log.d("MainActivity", "Settings permissions granted.")
                     currentUriString?.let { setRingtone(it) }
+                } else {
+                    Log.e("MainActivity", "Settings permissions denied.")
+                }
+            }
+            STORAGE_PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("MainActivity", "Storage permissions granted.")
                 } else {
                     Log.e("MainActivity", "Storage permissions denied.")
                 }

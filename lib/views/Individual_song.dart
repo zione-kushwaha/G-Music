@@ -19,6 +19,7 @@ class Individual_song extends StatelessWidget {
   static const namedRoute = '/individual_song';
 
   var values = 0.0;
+  bool do_state_state=false;
 
   @override
   Widget build(BuildContext context) {
@@ -73,26 +74,10 @@ height: MediaQuery.of(context).size.height,
                 soundVolume(),
                 song_detail(),
                 
-                     Container(
-                  height: 50,
-                  width: double.infinity,
-                  child:  MusicVisualizer(
-                    barCount: 30,
-                    colors: [
-            Colors.white,
-             
+                   
+                    
                     
               
-            Colors.orange,
-              Color.fromARGB(255, 69, 5, 208),
-                    Colors.red,
-            ],
-                    duration: [900, 700, 600, 800, 500],
-                ),
-              ),
-                    
-                    
-                songControllerBtn()
               ],
             ),
           ),

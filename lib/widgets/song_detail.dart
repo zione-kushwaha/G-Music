@@ -2,74 +2,282 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:music/views/equalizer_page.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:music/constants.dart';
 import 'package:music/providers/SongProvider.dart';
 import 'package:music/providers/playlist_provider.dart';
 import 'package:music/views/track_cutter.dart';
 import 'package:lecle_flutter_absolute_path/lecle_flutter_absolute_path.dart';
+import 'package:music_visualizer/music_visualizer.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
-class song_detail extends StatelessWidget {
+class song_detail extends StatefulWidget {
   const song_detail({
     super.key,
   });
-  
+
+  @override
+  State<song_detail> createState() => _song_detailState();
+}
+
+class _song_detailState extends State<song_detail> {
+ 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<SongProvier>(context);
-    return Card(
-      color: white.withOpacity(0.4),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Row(
+    final provider = Provider.of<SongProvier>(context,listen: false);
+    return Column(
+      children: [
+        Card(
+          color: white.withOpacity(0.4),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
               children: [
-                SvgPicture.asset('assets/icons/play_outline.svg'),
+                Row(
+                  children: [
+                    SvgPicture.asset('assets/icons/play_outline.svg'),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      '120 Play',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
                 SizedBox(
-                  width: 10,
+                  height: 10,
                 ),
-                Text(
-                  '120 Play',
-                  style: TextStyle(fontSize: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                        child: FutureBuilder<String>(
+          future: provider.getSongTitleFromDatabaseByIds(provider.currentSong.id), // replace with your method
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Text('Loading...');
+        } else {
+          if (snapshot.hasError)
+            return Text('Error: ${snapshot.error}');
+          else{
+           
+            return Text(
+              snapshot.data.toString(), // song title
+              maxLines: 1,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            );}
+        }
+          },
+        )),
+                    IconButton(
+                        onPressed: () {
+                          buttomsheet(context, provider);
+                        },
+                        icon: Icon(Icons.more_vert))
+                  ],
                 ),
+                Row(
+                  children: [
+                    Text(
+                      provider.songArtist,
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ),
+        ),
+
+
+
+        //play control
+         Consumer<SongProvier>(
+           builder: (context,Provider,child) {
+             return Column(
+                   children: [
+              provider.isplaying?        Container(
+                  height: 50,
+                  width: double.infinity,
+                  child:  MusicVisualizer(
+                    barCount: 30,
+                    colors: [
+            Colors.white,
+             
+                    
+              
+            Colors.orange,
+              Color.fromARGB(255, 69, 5, 208),
+                    Colors.red,
+            ],
+                    duration: [900, 700, 600, 800, 500],
+                ),
+              ):Container(height: 50,),
+                     Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Flexible(
-                    child: Text(
-                  provider.songTitle,
-                  maxLines: 1,
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                Text(
+                  '${provider.currentTime}',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Expanded(
+                    child: Slider(
+                  value: provider.sliderValue,
+                  onChanged: (value) {
+                    provider.sliderValue = value;
+             
+                    provider.change_duration(value);
+                  },
+                  min: 0,
+                  max: provider.sliderMaxVAlue,
                 )),
+                Text(
+                  provider.totalTime,
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ],
+                     ),
+                     Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                InkWell(
+                    borderRadius: BorderRadius.circular(50),
+                    onTap: () {
+                      setState(() {
+                          provider.previous_song(provider.currentSong);
+                      });
+                    
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(12),
+                      child: CircleAvatar(
+                          radius: 30,
+                          child: SvgPicture.asset(
+                            'assets/icons/back.svg',
+                            width: 25,
+                          )),
+                    )),
+                SizedBox(
+                  width: 25,
+                ),
+               InkWell(
+                 borderRadius: BorderRadius.circular(50),
+                 onTap: () {
+                   provider.isplaying
+                       ? provider.pause_Song()
+                       : provider.resume_Song();
+                 },
+                 child: Container(
+                   padding: EdgeInsets.all(11),
+                   child: CircleAvatar(
+                     radius: 32,
+                     backgroundColor: Colors.red,
+                     child: provider.isplaying
+                         ? SvgPicture.asset(
+                             'assets/icons/pause.svg',
+                             width: 30,
+                           )
+                         : SvgPicture.asset(
+                             'assets/icons/play.svg',
+                             width: 30,
+                           ),
+                   ),
+                 ),
+               ),
+                SizedBox(
+                  width: 20,
+                ),
+                InkWell(
+                    borderRadius: BorderRadius.circular(50),
+                    onTap: () {
+                      setState(() {
+                        provider.next_song(provider.currentSong);
+                      });
+             
+                    },                  
+                    child: Container(
+                      padding: EdgeInsets.all(12),
+                      child: CircleAvatar(
+                          radius: 30,
+                          child: SvgPicture.asset(
+                            'assets/icons/next.svg',
+                            width: 25,
+                          )),
+                    )),
+              ],
+                     ),
+                     SizedBox(
+              height: MediaQuery.of(context).size.height * 0.01,
+                     ),
+                     Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                InkWell(
+                    onTap: () {
+                      provider.shuffle_song();
+                    },
+                    borderRadius: BorderRadius.circular(35),
+                    child: Container(
+                        padding: EdgeInsets.all(3),
+                        child: SvgPicture.asset(
+                          'assets/icons/suffle.svg',
+                          width: 30,
+                          color: provider.is_shuffling ? Colors.red : Colors.white,
+                        ))),
+                InkWell(
+                  onTap: () {
+                    provider.loop_song();
+                  },
+                  borderRadius: BorderRadius.circular(35),
+                  child: Container(
+                      padding: EdgeInsets.all(3),
+                      child: SvgPicture.asset(
+                        'assets/icons/repeat.svg',
+                        width: 30,
+                        color: provider.is_looping ? Colors.red : Colors.white,
+                      )),
+                ),
                 IconButton(
                     onPressed: () {
-                      buttomsheet(context, provider);
+                      Navigator.pushNamed(context, equalizer_page.routeName);
                     },
-                    icon: Icon(Icons.more_vert))
+                    icon: Icon(
+                      Icons.equalizer,
+                      color: Colors.white,
+                      size: 34,
+                    )),
+                InkWell(
+                    
+                    child: IconButton(
+                        onPressed: () async {
+                          //get the absolute path of the song from uri
+                          final filePath =
+                              await LecleFlutterAbsolutePath.getAbsolutePath(
+                                  uri: provider.currentSong.uri.toString());
+                                   
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                       AudioTrimmerView(file:File(filePath!))));
+                        },
+                        icon: Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                          size: 34,
+                        ))),
               ],
-            ),
-            Row(
-              children: [
-                Text(
-                  provider.songArtist,
-                  style: TextStyle(
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            )
-          ],
-        ),
-      ),
+                     )
+                   ],
+                 );
+           }
+         )
+      ],
     );
   }
 
@@ -440,11 +648,13 @@ class song_detail extends StatelessWidget {
               child: Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () async {
+              onPressed: () {
                 // code to rename the song
                 if(controller.text.isNotEmpty){
                   
                 Provider.of<SongProvier>(context,listen: false).changeSongTitle(song, controller.text);
+                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Song renamed successfully!')));
+                 Navigator.pop(context);
               }else{
                 return;
               }

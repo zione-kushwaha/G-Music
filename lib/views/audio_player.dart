@@ -100,11 +100,12 @@ class list_builer_audio_player extends StatelessWidget {
       physics: const BouncingScrollPhysics(),
       itemCount: provider.getSongs().length,
       itemBuilder: (context, index) {
-        final song = provider.getSongs()[index];
+        final song = provider.updatedSongs[index];
+        final real =provider.getSongs()[index];
 
         return ListTile(
           onTap: () {
-            provider.play_song(song);
+            provider.play_song(real);
 
             Navigator.pushNamed(context, Individual_song.namedRoute);
           },
@@ -120,11 +121,19 @@ class list_builer_audio_player extends StatelessWidget {
             id: song.id,
             type: ArtworkType.AUDIO,
           ),
-          title: Text('${song.title}',
-              maxLines: 1, style: TextStyle(color: Colors.white)),
+
+          title: Consumer<SongProvier>(
+  builder: (context, songProvider, child) {
+    return Text(songProvider.updatedSongs[index].title ,
+        maxLines: 1, style: TextStyle(color: Colors.white));
+  },
+),
+         
           subtitle: Text('${song.artist}',
               maxLines: 1, style: TextStyle(color: Colors.grey)),
-          trailing: Icon(Icons.more_vert, color: Colors.white.withOpacity(0.7)),
+          trailing: IconButton(onPressed: ()async{
+         await   provider.printTitleChangeHistory();
+          }, icon: Icon(Icons.more_vert, color: Colors.white.withOpacity(0.7))),
         );
       },
     );

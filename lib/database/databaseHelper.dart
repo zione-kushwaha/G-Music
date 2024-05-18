@@ -46,17 +46,16 @@ await db.execute('''
   )
 ''');
 
-   //cretion of the playlist table in the database
+ //creation of table for storing the song title change history
     await db.execute('''
-    CREATE TABLE IF NOT EXISTS playlist (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      playlist_name TEXT,
-      song_name TEXT,
-      is_favorite INTEGER,
-      artist_name TEXT,
-      albumId INTEGER
-    )'''
-    );
+
+  CREATE TABLE IF NOT EXISTS song_title_change_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    old_title TEXT,
+    new_title TEXT,
+    song_id INTEGER
+  )
+  ''');
 
     
   }
@@ -83,40 +82,49 @@ await db.execute('''
     return await db!.delete('recent_played_songs', where: 'id = ?', whereArgs: [id]);
   }
 
-  // function to insert in the table playlist
-  Future<int> insertPlaylist(Map<String, dynamic> row) async {
+
+ //function to check if the song title is already in the table
+Future<int?> checkTitleChange(int songId) async {
+  Database? db = await instance.database;
+  var result = await db!.query('song_title_change_history', where: 'song_id = ?', whereArgs: [songId]);
+  return result.isNotEmpty ? (result.first['id'] as int?) : null;
+}
+
+//function to insert in the table song title change history
+Future<int> insertTitleChange(Map<String, dynamic> row) async {
+  // checking if the song title is already in the table
+  int? existingId = await checkTitleChange(row['song_id']);
+  if (existingId != null) {
+    row['id'] = existingId; // add the id to the row
+    updateTitleChange(row);
+    return 0;
+  } else {
     Database? db = await instance.database;
-    return await db!.insert('playlist', row);
+    return await db!.insert('song_title_change_history', row);
+  }
+}
+  
+
+  //function to query all the rows in the table song title change history
+  Future<List<Map<String, dynamic>>> queryAllTitleChangeRows() async {
+    Database? db = await instance.database;
+    return await db!.query('song_title_change_history', orderBy: 'id DESC');
+  }
+  //function to delete a row in the table song title change history
+  Future<int> deleteTitleChange(int id) async {
+    Database? db = await instance.database;
+    return await db!.delete('song_title_change_history', where: 'id = ?', whereArgs: [id]);
+  }
+  //function to query a row with the song id in the table song title change history
+  Future<List<Map<String, dynamic>>> queryTitleChangeRow(int songId) async {
+    Database? db = await instance.database;
+    return await db!.query('song_title_change_history', where: 'song_id = ?', whereArgs: [songId]);
   }
 
-  //function to query all the rows in the table playlist
-  Future<List<Map<String, dynamic>>> queryAllPlaylist() async {
+  //function to update a row in the table song title change history
+  Future<int> updateTitleChange(Map<String, dynamic> row) async {
     Database? db = await instance.database;
-    return await db!.query('playlist');
+    return await db!.update('song_title_change_history', row, where: 'id = ?', whereArgs: [row['id']]);
   }
 
-  //function to delete a row in the table playlist
-  Future<int> deletePlaylist(int id) async {
-    Database? db = await instance.database;
-    return await db!.delete('playlist', where: 'id = ?', whereArgs: [id]);
-  }
-
-  //function to get list of all the song if name of playlist is given
-  Future<List<Map<String, dynamic>>> queryAllPlaylists(String playlistName) async {
-    Database? db = await instance.database;
-    return await db!.query('playlist', where: 'playlist_name = ?', whereArgs: [playlistName]);
-  }
-
-  //function to get the last row album id if the name of the playlist is given
-  Future<int> queryAlbumId(String playlistName) async {
-    Database? db = await instance.database;
-    List<Map<String, dynamic>> albumId = await db!.query('playlist', where: 'playlist_name = ?', whereArgs: [playlistName]);
-    return albumId[albumId.length - 1]['albumId'];
-  }
-
-  //function to get the list of different playlist only with the last song ablumid and playlist name
-  Future<List<Map<String, dynamic>>> queryAllPlaylistName() async {
-    Database? db = await instance.database;
-    return await db!.query('playlist', columns: ['playlist_name', 'albumId'], distinct: true);
-  }
 }

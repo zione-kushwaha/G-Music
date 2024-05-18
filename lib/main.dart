@@ -72,9 +72,9 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           brightness: Brightness.light,
-          cardTheme: CardTheme(
-            color: Colors.white, // Set the color you want
-          ),
+          // cardTheme: CardTheme(
+          //   color: Colors.white, // Set the color you want
+          // ),
           primarySwatch: MaterialColor(ui_color.value, {
             50: ui_color.withOpacity(0.1),
             100: ui_color.withOpacity(0.2),
