@@ -286,6 +286,8 @@ class _song_detailState extends State<song_detail> {
   }
 
   void buttomsheet(BuildContext context, SongProvier provider) {
+     final ui = Provider.of<Ui_changer>(context,listen: false);
+      
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -293,7 +295,7 @@ class _song_detailState extends State<song_detail> {
           return Container(
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-                    colors: [ui_color, Colors.black.withOpacity(0.6)],
+                    colors: [ui.ui_color, Colors.black.withOpacity(0.6)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight),
                 borderRadius: BorderRadius.only(
@@ -466,6 +468,8 @@ class _song_detailState extends State<song_detail> {
 
   // function to show the modalbottom sheet for adding item in the playlist
   void playlist_bottom_sheet(playlistProvider playlist, context) {
+     final ui = Provider.of<Ui_changer>(context,listen: false );
+      
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -473,7 +477,7 @@ class _song_detailState extends State<song_detail> {
           return Container(
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-                    colors: [ui_color, Colors.black.withOpacity(0.6)],
+                    colors: [ui.ui_color, Colors.black.withOpacity(0.6)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight),
                 borderRadius: BorderRadius.only(
@@ -561,6 +565,8 @@ class _song_detailState extends State<song_detail> {
   void createPlaylistPopup(BuildContext context) {
     TextEditingController controller = TextEditingController();
     final provider = Provider.of<SongProvier>(context, listen: false);
+     final ui = Provider.of<Ui_changer>(context,listen: false);
+      
     showDialog(
       context: context,
       builder: (context) {
@@ -568,7 +574,7 @@ class _song_detailState extends State<song_detail> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          backgroundColor: ui_color,
+          backgroundColor:ui.ui_color,
           title: Text('Create new Playlist',
               style: TextStyle(fontSize: 20, color: white)),
           content: TextField(
@@ -619,11 +625,13 @@ class _song_detailState extends State<song_detail> {
 // function to show the the dialog for input of rename of song
   void renameSongPopup(BuildContext context,SongModel song) {
     TextEditingController controller=TextEditingController();
+     final ui = Provider.of<Ui_changer>(context,listen: false);
+      
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: ui_color,
+          backgroundColor:ui.ui_color,
           title: Text(
             'Rename Song',
             style: TextStyle(color: white),
@@ -674,6 +682,8 @@ class _song_detailState extends State<song_detail> {
 // function to show the alert dialog for the delete the song
   void deleteSongPopup(BuildContext context) {
     final provider = Provider.of<SongProvier>(context, listen: false);
+     final ui = Provider.of<Ui_changer>(context,listen: false);
+      
     showDialog(
       context: context,
       builder: (context) {
@@ -682,7 +692,7 @@ class _song_detailState extends State<song_detail> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          backgroundColor: ui_color,
+          backgroundColor:ui. ui_color,
           title: Text('Are you sure to Delete this Song?',
               style: TextStyle(fontSize: 20, color: white)),
           actions: [
@@ -726,6 +736,8 @@ class _song_detailState extends State<song_detail> {
 
   //function to show the alert dialog for set song as ringtone
   void setRingtonePopup(BuildContext context, SongModel song) {
+     final ui = Provider.of<Ui_changer>(context,listen: false);
+      
     showDialog(
       context: context,
       builder: (context) {
@@ -733,7 +745,7 @@ class _song_detailState extends State<song_detail> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          backgroundColor: ui_color,
+          backgroundColor:ui. ui_color,
           title: Text('Are you sure to set this as Ringtone?',
               style: TextStyle(fontSize: 20, color: white)),
           actions: [

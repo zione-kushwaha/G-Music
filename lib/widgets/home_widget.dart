@@ -35,43 +35,37 @@ class _PlayerHomeState extends State<PlayerHome> {
     final provider = Provider.of<SongProvier>(
       context,
     );
+    final ui = Provider.of<Ui_changer>(
+      context,
+    );
     return  GestureDetector(
         onTap: () {
-         
-        Navigator.push(context, PageRouteBuilder(pageBuilder:  (context, animation, secondaryAnimation) => Individual_song(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = Offset(0.0, 1.0);
-        var end = Offset.zero;
-        var curve = Curves.ease;
-      
-        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-      
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      }));
+          Navigator.pushNamed(context, Individual_song.namedRoute);
+        
+
+        
+          
         },
         child: Column(
           children: [
             
             Container(
         width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(horizontal: 10),
+        
         margin: EdgeInsets.zero,
         child: SliderTheme(
           data: SliderTheme.of(context).copyWith(
             thumbShape: RoundSliderThumbShape(enabledThumbRadius: 0),
             overlayShape: RoundSliderOverlayShape(overlayRadius: 0), // Remove overlay padding
-            trackHeight: 10,
+            trackHeight: 7,
             trackShape:  RectangularSliderTrackShape(),
           ),
           child: Slider(
             value: provider.sliderValue,
             max:provider.sliderMaxVAlue,
             min: 0,
-            inactiveColor: Colors.grey[500],
-            activeColor:Colors.black, // Change this to your desired color
+            inactiveColor: Colors.grey,
+            activeColor:ui.ui_dark_color, // Change this to your desired color
             onChanged: (value) {
                provider.sliderValue = value;
                                 provider.change_duration(value);
@@ -81,11 +75,11 @@ class _PlayerHomeState extends State<PlayerHome> {
       ),
             
             Container(
-              height: MediaQuery.of(context).size.height * 0.09,
+              height: MediaQuery.of(context).size.height * 0.074,
               
               decoration: BoxDecoration(
-                color: ui_color,
-                borderRadius: BorderRadius.only(topRight: Radius.circular(30)),
+                color: Colors.black.withOpacity(0.5),
+               
               ),
               child: Column(
                 children: [
@@ -128,7 +122,7 @@ class _PlayerHomeState extends State<PlayerHome> {
                               children: [
                               
                                 SizedBox(
-                                  width:  MediaQuery.of(context).size.width*0.6,
+                                  width:  MediaQuery.of(context).size.width*0.7,
                                   child: Text(
                                     provider.songTitle,
                                     maxLines: 1,
@@ -139,7 +133,7 @@ class _PlayerHomeState extends State<PlayerHome> {
                                   ),
                                 ),
                                 SizedBox(
-                                  width:  MediaQuery.of(context).size.width*0.5,
+                                  width:  MediaQuery.of(context).size.width*0.6,
                                   child: Text(
                                     provider.songArtist,
                                     maxLines: 1,
@@ -162,6 +156,9 @@ class _PlayerHomeState extends State<PlayerHome> {
                           onPressed: (){
                             provider.isplaying?provider.pause_Song():provider.resume_Song();
                           },
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width*0.02,
                       ),
                     ],
                   ),

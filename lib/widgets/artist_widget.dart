@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:music/constants.dart';
 import 'package:music/providers/artistProvider.dart';
 import 'package:music/views/artist_detail_page.dart';
+import 'package:music/widgets/home_widget.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
@@ -15,9 +16,12 @@ class ArtistPage extends StatefulWidget {
 class _ArtistPageState extends State<ArtistPage> {
   @override
   Widget build(BuildContext context) {
+    final ui = Provider.of<Ui_changer>(
+      context,
+    );
     final provider=Provider.of<ArtistProvider>(context);
     return  Container(
-        color: ui_color,
+        color:ui. ui_color,
         child: Column(
           children: [
             Expanded(
@@ -63,6 +67,7 @@ class _ArtistPageState extends State<ArtistPage> {
                 },
               ),
             ),
+            PlayerHome()
           ],
         ),
       );

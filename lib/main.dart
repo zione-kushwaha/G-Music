@@ -13,9 +13,9 @@ import 'package:music/views/Individual_song.dart';
 import 'package:music/views/album_detail_page.dart';
 import 'package:music/views/artist_detail_page.dart';
 import 'package:music/views/audio_player.dart';
+import 'package:music/views/custom_theme.dart';
 import 'package:music/views/equalizer_page.dart';
 import 'package:music/views/search_screen.dart';
-import 'package:music/views/test_screen.dart';
 import 'package:music/views/track_cutter.dart';
 import 'package:music/widgets/playlist_widget.dart';
 import 'package:provider/provider.dart';
@@ -36,6 +36,7 @@ void main() {
     ChangeNotifierProvider(create: (_) => ArtistProvider()),
     ChangeNotifierProvider(create: (_) => GenresProvider()),
     ChangeNotifierProvider(create: (_) => AlbumProvider()),
+    ChangeNotifierProvider(create: (_)=>Ui_changer())
   ], child: const MyApp()));
 }
 
@@ -68,80 +69,91 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Music Player',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          brightness: Brightness.light,
-          // cardTheme: CardTheme(
-          //   color: Colors.white, // Set the color you want
-          // ),
-          primarySwatch: MaterialColor(ui_color.value, {
-            50: ui_color.withOpacity(0.1),
-            100: ui_color.withOpacity(0.2),
-            200: ui_color.withOpacity(0.3),
-            300: ui_color.withOpacity(0.4),
-            400: ui_color.withOpacity(0.5),
-            500: ui_color.withOpacity(0.6),
-            600: ui_color.withOpacity(0.7),
-            700: ui_color.withOpacity(0.8),
-            800: ui_color.withOpacity(0.9),
-            900: ui_color.withOpacity(1),
-          }),
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        onGenerateRoute: (RouteSettings settings) {
-          
-          switch (settings.name) {
-            case '/':
-              return createRoute(const HomeScreen());
-              // return createRoute(const test_screen());
-
-            case AudioPlayerss.routeName:
-              return createRoute(const AudioPlayerss());
-
-            case Individual_song.namedRoute:
-              return createRoute(Individual_song());
-
-            case AlbumDetailPage.namedRoute:
-              var args = settings.arguments as Map;
-              var album = args['album'];
-              return createRoute(AlbumDetailPage(album: album));
-
-            // Add more cases as needed for each route
-
-            case playlist_widget.routeName:
-              var args = settings.arguments as Map;
-              var playlist = args['playlist'];
-              return createRoute(playlist_widget(play: playlist));
-
-            case equalizer_page.routeName:
-              return createRoute(const equalizer_page());
-
-            case AudioTrimmerView.routeName:
-              var args = settings.arguments as Map;
-              var file = args['file'];
-              return createRoute(AudioTrimmerView(file: file));
-
-            case track_cutter.routeName:
-              return createRoute(const track_cutter());
-
-            case artist_detail_page.namedRoute:
-              var args = settings.arguments as Map;
-              var artist = args['artist'];
-              return createRoute(artist_detail_page(artist: artist));
-
-            case GenresPageDetail.namedRoute:
-              var args = settings.arguments as Map;
-              var genre = args['genre'];
-              return createRoute(GenresPageDetail(genre: genre));
-
-            case SearchScreen.routeName:
-              return createRoute(SearchScreen());
-            default:
-              return null;
-          }
-        });
+    return Builder(
+      builder: (context) {
+         final ui = Provider.of<Ui_changer>(context,);
+      final ui_color = ui.ui_color;
+        
+        return MaterialApp(
+            title: 'Music Player',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              brightness: Brightness.light,
+              // cardTheme: CardTheme(
+              //   color: Colors.white, // Set the color you want
+              // ),
+              primarySwatch: MaterialColor(ui_color.value, {
+                50: ui_color.withOpacity(0.1),
+                100: ui_color.withOpacity(0.2),
+                200: ui_color.withOpacity(0.3),
+                300: ui_color.withOpacity(0.4),
+                400: ui_color.withOpacity(0.5),
+                500: ui_color.withOpacity(0.6),
+                600: ui_color.withOpacity(0.7),
+                700: ui_color.withOpacity(0.8),
+                800: ui_color.withOpacity(0.9),
+                900: ui_color.withOpacity(1),
+              }),
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+            ),
+            onGenerateRoute: (RouteSettings settings) {
+              
+              switch (settings.name) {
+                case '/':
+                  return createRoute(const HomeScreen());
+                  // return createRoute(const test_screen());
+        
+                case AudioPlayerss.routeName:
+                  return createRoute(const AudioPlayerss());
+        
+                case Individual_song.namedRoute:
+                  return createRoute(Individual_song());
+        
+                case AlbumDetailPage.namedRoute:
+                  var args = settings.arguments as Map;
+                  var album = args['album'];
+                  return createRoute(AlbumDetailPage(album: album));
+        
+                // Add more cases as needed for each route
+        
+                case playlist_widget.routeName:
+                  var args = settings.arguments as Map;
+                  var playlist = args['playlist'];
+                  return createRoute(playlist_widget(play: playlist));
+        
+                case equalizer_page.routeName:
+                  return createRoute(const equalizer_page());
+        
+                case AudioTrimmerView.routeName:
+                  var args = settings.arguments as Map;
+                  var file = args['file'];
+                  return createRoute(AudioTrimmerView(file: file));
+        
+                case track_cutter.routeName:
+                  return createRoute(const track_cutter());
+        
+                case artist_detail_page.namedRoute:
+                  var args = settings.arguments as Map;
+                  var artist = args['artist'];
+                  return createRoute(artist_detail_page(artist: artist));
+        
+                case GenresPageDetail.namedRoute:
+                  var args = settings.arguments as Map;
+                  var genre = args['genre'];
+                  return createRoute(GenresPageDetail(genre: genre));
+        
+                case SearchScreen.routeName:
+                  return createRoute(SearchScreen());
+        
+                  case CustomTheme.routeName:
+                  return createRoute(CustomTheme()); 
+        
+                default:
+                  return null;
+              }
+            });
+      }
+    );
   }
 }
 

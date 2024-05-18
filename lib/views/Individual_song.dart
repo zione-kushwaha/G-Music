@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 import 'package:music/widgets/song_detail.dart';
 import 'package:music/widgets/sound_volume.dart';
+import 'package:provider/provider.dart';
 import '../widgets/song_controller.dart';
 
 
@@ -23,13 +24,16 @@ class Individual_song extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ui = Provider.of<Ui_changer>(
+      context,
+    );
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [ui_color, Colors.black.withOpacity(0.7)],  )
+            colors: [ui.ui_color, Colors.black.withOpacity(0.7)],  )
         ),
 height: MediaQuery.of(context).size.height,
         child: Padding(

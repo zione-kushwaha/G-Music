@@ -57,6 +57,7 @@ dependencies:
   animated_segmented_tab_control: ^2.0.0
   flutter_custom_tab_bar: ^1.2.1
   glossy: ^0.0.4
+  neopop: ^1.0.2
   # music_visualizer: ^1.0.4
   
   

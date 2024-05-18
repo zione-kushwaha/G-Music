@@ -73,8 +73,11 @@ var album = song.album!.toLowerCase();
 
   @override
   Widget build(BuildContext context) {
+    final ui = Provider.of<Ui_changer>(
+      context,
+    );
     return Scaffold(
-      backgroundColor: ui_color,
+      backgroundColor:ui. ui_color,
       appBar: AppBar(
   leading: IconButton(
     icon: Icon(Icons.arrow_back,color: white,),
@@ -82,7 +85,7 @@ var album = song.album!.toLowerCase();
   ),
   automaticallyImplyLeading: false,
   centerTitle: true,
-  backgroundColor: ui_color,
+  backgroundColor: ui.ui_color,
   title: Container(
   padding: EdgeInsets.symmetric(horizontal: 8),
   decoration: BoxDecoration(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:glossy/glossy.dart';
 import 'package:music/constants.dart';
+import 'package:provider/provider.dart';
 
 
 class test_screen extends StatelessWidget {
@@ -9,8 +10,11 @@ class test_screen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ui = Provider.of<Ui_changer>(
+      context,
+    );
     return  Scaffold(
-        backgroundColor: ui_color.withOpacity(0.4),
+        backgroundColor:ui. ui_color.withOpacity(0.4),
         appBar: AppBar(
           title: const Text('Glass Morphism Example'),
         ),

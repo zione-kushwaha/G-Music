@@ -23,6 +23,9 @@ class _GenresPageDetailState extends State<GenresPageDetail> {
 
   @override
   Widget build(BuildContext context) {
+    final ui = Provider.of<Ui_changer>(
+      context,
+    );
     final provider= Provider.of<SongProvier>(context,listen: false);
     
     return Scaffold(
@@ -32,7 +35,7 @@ class _GenresPageDetailState extends State<GenresPageDetail> {
          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [ui_color, Colors.black.withOpacity(0.7)],)
+            colors: [ui.ui_color, Colors.black.withOpacity(0.7)],)
         ),
         child: Column(
           children: [

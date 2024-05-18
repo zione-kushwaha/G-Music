@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:music/constants.dart';
 import 'package:music/views/search_screen.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:provider/provider.dart';
 
 
 
@@ -16,6 +17,9 @@ class playlist_widget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ui = Provider.of<Ui_changer>(
+      context,
+    );
      return Scaffold( 
 
       body:Container(
@@ -24,7 +28,7 @@ class playlist_widget extends StatelessWidget {
          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [ui_color, Colors.black.withOpacity(0.7)],)
+            colors: [ui.ui_color, Colors.black.withOpacity(0.7)],)
         ),
         child: Column(
          

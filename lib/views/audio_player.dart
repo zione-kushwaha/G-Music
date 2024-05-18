@@ -33,6 +33,8 @@ class _AudioPlayerssState extends State<AudioPlayerss> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<SongProvier>(context, listen: false);
+     final ui = Provider.of<Ui_changer>(context,);
+      
 
     return FutureBuilder(
       future: loadSongsFuture,
@@ -40,7 +42,7 @@ class _AudioPlayerssState extends State<AudioPlayerss> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
               child: CircularProgressIndicator(
-            color: ui_color,
+            color: ui.ui_color,
           ));
         } else {
           return Container(
@@ -66,7 +68,22 @@ class _AudioPlayerssState extends State<AudioPlayerss> {
                             children: [
                               Text('${provider.getSongs().length}',
                                   style: TextStyle(color: Colors.white)),
-                              Icon(Icons.shuffle, color: Colors.white),
+                              
+                              
+                              Consumer<SongProvier>(
+                                builder: (context,provider,child) {
+                                  return InkWell(
+                                    onTap: (){
+                                     
+                                       provider.shuffle_song();
+                                     
+                                     
+                                    },
+                                    child: Icon(
+                                      
+                                      provider.is_shuffling?Icons.shuffle:Icons.double_arrow, color: Colors.white));
+                                }
+                              ),
                             ],
                           ),
                         ),
@@ -75,8 +92,17 @@ class _AudioPlayerssState extends State<AudioPlayerss> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Icon(Icons.skip_previous, color: Colors.white),
-                              Icon(Icons.skip_next, color: Colors.white),
+                              InkWell(
+                                onTap: (){
+                                  provider.previous_song( provider.currentSong);
+                                
+                                },
+                                child: Icon(Icons.skip_previous, color: Colors.white)),
+                              InkWell(
+                                onTap: (){
+                                  provider.next_song(provider.currentSong);
+                                },
+                                child: Icon(Icons.skip_next, color: Colors.white)),
                               Icon(Icons.check_circle_outline,
                                   color: Colors.white),
                             ],
@@ -87,7 +113,7 @@ class _AudioPlayerssState extends State<AudioPlayerss> {
                   ),
                   Container(
                  
-                    height: MediaQuery.of(context).size.height * 0.6995,
+                    height: MediaQuery.of(context).size.height * 0.72,
                     child: list_builer_audio_player()),
                     
                     PlayerHome()

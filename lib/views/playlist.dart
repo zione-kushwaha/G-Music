@@ -154,7 +154,10 @@ class _playlist_pageState extends State<playlist_page> {
   // function to show the popup menu button for input of playlist name
   void createPlaylistPopup(BuildContext context) {
     TextEditingController controller = TextEditingController();
-   
+   final ui = Provider.of<Ui_changer>(
+      context,
+      listen: false,
+    );
     showDialog(
       context: context,
       builder: (context) {
@@ -162,7 +165,7 @@ class _playlist_pageState extends State<playlist_page> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          backgroundColor: ui_color,
+          backgroundColor: ui.ui_color,
           title: Text('Create new Playlist',
               style: TextStyle(fontSize: 20, color: white)),
           content: TextField(

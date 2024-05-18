@@ -11,9 +11,12 @@ import 'package:provider/provider.dart';
 class AlbumPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<AlbumProvider>(context,listen: false);
+    final ui = Provider.of<Ui_changer>(
+      context,
+    );
+    final provider = Provider.of<AlbumProvider>(context, listen: false);
     return Container(
-      color: ui_color,
+      color: ui.ui_color,
       child: Column(
         children: [
           Expanded(
@@ -22,7 +25,7 @@ class AlbumPage extends StatelessWidget {
               child: GridView.builder(
                 physics: BouncingScrollPhysics(),
                 itemCount: provider.getAlbums().length,
-                gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3, // number of items per row
                     childAspectRatio: 1.0, // item width to height ratio,
                     mainAxisSpacing: 10,
@@ -47,40 +50,41 @@ class AlbumPage extends StatelessWidget {
                               width: 100,
                               child: GridTile(
                                 child: ClipRRect(
-                              borderRadius: BorderRadius.circular(2),
+                                  borderRadius: BorderRadius.circular(2),
                                   child: QueryArtworkWidget(
-                                                                    id: album.id, 
-                                                                    type: ArtworkType.ALBUM,
-                                                                    artworkFit: BoxFit.cover,
-                                                                    nullArtworkWidget: CircleAvatar(
-                                                                      radius: 23,
-                                                                      child: Icon(
-                                                                        Icons.music_note,
-                                                                        color: Colors.white,
-                                                                        size: 40,
-                                                                      )
-                                                                    ),
-                                                                  ),
+                                    id: album.id,
+                                    type: ArtworkType.ALBUM,
+                                    artworkFit: BoxFit.cover,
+                                    nullArtworkWidget: CircleAvatar(
+                                        radius: 23,
+                                        child: Icon(
+                                          Icons.music_note,
+                                          color: Colors.white,
+                                          size: 40,
+                                        )),
+                                  ),
                                 ),
-                                
                               ),
                             ),
                           ),
-                           
-
                           Container(
                             height: 40,
                             width: 100,
-                            
                             child: Column(
                               children: [
                                 Text('${album.album}',
-                                maxLines: 1,
-                                 style: TextStyle(color: white, fontSize: 10, fontWeight: FontWeight.bold, )),
-                             Text('${album.artist}',
-                                maxLines: 1,
-                                 style: TextStyle(color: white.withOpacity(0.7), fontSize: 8,  )),
-                             
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      color: white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                                Text('${album.artist}',
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      color: white.withOpacity(0.7),
+                                      fontSize: 8,
+                                    )),
                               ],
                             ),
                           ),
