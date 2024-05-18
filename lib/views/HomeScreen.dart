@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:music/constants.dart';
 
 
 import 'package:music/views/audio_player.dart';
@@ -48,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 127, 27, 19),
+      backgroundColor: ui_color,
       appBar: AppBar(
          iconTheme: IconThemeData(
         color: Colors.white,
@@ -61,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       Navigator.pushNamed(context, SearchScreen.routeName);
       }, icon: Icon(Icons.search,color: Colors.white.withOpacity(0.7),size: 25,))],
         title: const Text('Scanning...',style: TextStyle(color: Colors.white,fontSize: 20),),
-        backgroundColor: Color.fromARGB(255, 127, 27, 19),
+        backgroundColor: ui_color,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(40.0),
           child: AnimatedBuilder(

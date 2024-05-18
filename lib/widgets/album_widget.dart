@@ -18,7 +18,7 @@ class AlbumPage extends StatelessWidget {
         children: [
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               child: GridView.builder(
                 physics: BouncingScrollPhysics(),
                 itemCount: provider.getAlbums().length,

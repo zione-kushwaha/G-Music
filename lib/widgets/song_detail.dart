@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:music/views/equalizer_page.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:music/constants.dart';
@@ -81,10 +82,13 @@ class _song_detailState extends State<song_detail> {
                 ),
                 Row(
                   children: [
-                    Text(
-                      provider.songArtist,
-                      style: TextStyle(
-                        fontSize: 12,
+                    Flexible(
+                      child: Text(
+                        provider.songArtist,
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ],

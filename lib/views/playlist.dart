@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:music/constants.dart';
 import 'package:music/providers/SongProvider.dart';
 import 'package:music/providers/playlist_provider.dart';
+import 'package:music/widgets/home_widget.dart';
 import 'package:music/widgets/playlist_widget.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
@@ -86,6 +87,7 @@ class _playlist_pageState extends State<playlist_page> {
             },
           ),
         ),
+        PlayerHome()
       ],
     );
   }

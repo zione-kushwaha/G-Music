@@ -15,6 +15,7 @@ import 'package:music/views/artist_detail_page.dart';
 import 'package:music/views/audio_player.dart';
 import 'package:music/views/equalizer_page.dart';
 import 'package:music/views/search_screen.dart';
+import 'package:music/views/test_screen.dart';
 import 'package:music/views/track_cutter.dart';
 import 'package:music/widgets/playlist_widget.dart';
 import 'package:provider/provider.dart';
@@ -90,9 +91,11 @@ class _MyAppState extends State<MyApp> {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         onGenerateRoute: (RouteSettings settings) {
+          
           switch (settings.name) {
             case '/':
               return createRoute(const HomeScreen());
+              // return createRoute(const test_screen());
 
             case AudioPlayerss.routeName:
               return createRoute(const AudioPlayerss());
