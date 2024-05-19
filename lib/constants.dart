@@ -39,7 +39,8 @@ void initalize(){
   Color(0xff245501),
   Color.fromARGB(255, 80, 70, 10),
   Color.fromARGB(255, 4, 144, 154),
-  Color(0xff3f1b53)
+  Color(0xff3f1b53),
+
   
   ];
   List<Color> _ui_dark_colors=[Color.fromARGB(255, 3, 77, 169),Color(0xFF3a0ca3),Color.fromARGB(255, 213, 43, 199),
