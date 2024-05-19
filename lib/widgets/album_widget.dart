@@ -2,18 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:music/constants.dart';
 import 'package:music/providers/album_provider.dart';
-
 import 'package:music/views/album_detail_page.dart';
 import 'package:music/widgets/home_widget.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
+
 class AlbumPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final ui = Provider.of<Ui_changer>(
-      context,
-    );
+    final ui = Provider.of<Ui_changer>(context,);
     final provider = Provider.of<AlbumProvider>(context, listen: false);
     return Container(
       color: ui.ui_color,

@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:music/constants.dart';
 import 'package:music/providers/SongProvider.dart';
 import 'package:music/providers/playlist_provider.dart';
+import 'package:music/views/recent_playlist_page.dart';
 import 'package:music/widgets/home_widget.dart';
 import 'package:music/widgets/playlist_widget.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -92,64 +93,91 @@ class _playlist_pageState extends State<playlist_page> {
     );
   }
 
-  ListTile _buildStaticListTile(int index) {
+ ListTile _buildStaticListTile(int index) {
   String title;
   IconData icon;
+  Widget subtitle;
   switch (index) {
-    case 2:
-      title = 'Recently Added';
-      icon = Icons.playlist_add;
+    case 0:
+      title = 'Favourites';
+      icon = Icons.favorite_border;
+      subtitle = Text(
+        '20 songs',
+        style: TextStyle(
+          color: Colors.white.withOpacity(0.7),
+        ),
+      );
       break;
     case 1:
+      title = 'Most Played';
+      icon = Icons.play_arrow;
+      subtitle = Text(
+        '30 songs',
+        style: TextStyle(
+          color: Colors.white.withOpacity(0.7),
+        ),
+      );
+      break;
+    case 2:
       title = 'Recently Played';
-      icon = Icons.history;
+      icon = Icons.playlist_add;
+     subtitle = FutureBuilder<int?>(
+  future: Provider.of<SongProvier>(context,listen: false).getRowCount(),
+  builder: (BuildContext context,AsyncSnapshot<int?> snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return CircularProgressIndicator();
+    } else if (snapshot.hasError) {
+      return Text('Error: ${snapshot.error}');
+    } else {
+      return Text(
+        '${snapshot.data} songs',
+        style: TextStyle(
+          color: Colors.white.withOpacity(0.7),
+        ),
+      );
+    }
+  },
+);
       break;
     case 3:
-      title = 'My Top Track';
-      icon = Icons.grade;
-      break;
-    case 0:
-      title = 'Favourite';
-      icon = Icons.favorite;
+      title = 'Downloads';
+      icon = Icons.download;
+      subtitle = Text(
+        '15 songs',
+        style: TextStyle(
+          color: Colors.white.withOpacity(0.7),
+        ),
+      );
       break;
     default:
-      return ListTile(); // Return an empty ListTile for invalid index
+      title = '';
+      icon = Icons.favorite_border;
+      subtitle = Text(
+        '20 songs',
+        style: TextStyle(
+          color: Colors.white.withOpacity(0.7),
+        ),
+      );
   }
 
   return ListTile(
-    leading: Container(
-      height: 40,
-      width: 40,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Colors.white.withOpacity(0.2),
-      ),
-      child: Icon(
-        icon,
-        color: Colors.white.withOpacity(0.7),
-      ),
-    ),
-    subtitle: Text(
-      '4 songs',
-      style: TextStyle(
-        color: Colors.white.withOpacity(0.7),
-      ),
-    ),
     title: Text(
       title,
       style: TextStyle(
         color: Colors.white,
       ),
     ),
-    trailing: IconButton(
-      onPressed: () {},
-      icon: Icon(
-        Icons.more_vert,
-        color: Colors.white.withOpacity(0.7),
-      ),
+    leading: Icon(
+      icon,
+      color: Colors.white.withOpacity(0.7),
     ),
+    subtitle: subtitle,
+    onTap: () {
+      Navigator.pushNamed(context, recent_played_songs.routeName);
+    },
   );
 }
+  }
 
   // function to show the popup menu button for input of playlist name
   void createPlaylistPopup(BuildContext context) {
@@ -214,7 +242,7 @@ class _playlist_pageState extends State<playlist_page> {
       },
     );
   }
-}
+
 
 class popup_menu_bottom extends StatelessWidget {
   final String playlistName;

@@ -54,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
     return Scaffold(
       backgroundColor:ui. ui_color,
+     
       appBar: AppBar(
          iconTheme: IconThemeData(
         color: Colors.white,

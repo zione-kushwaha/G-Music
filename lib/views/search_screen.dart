@@ -14,8 +14,8 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   TextEditingController _searchController = TextEditingController();
 
-  List<SongModel> _list_song = [];
-  List<SongModel> _searchResult = [];
+  List<song> _list_song = [];
+  List<song>_searchResult = [];
 
   Timer? _debounce;
 
@@ -30,16 +30,17 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
   searchResultList() {
-  List<SongModel> showResults = [];
+  List<song> showResults = [];
   String searchText = _searchController.text.replaceAll(' ', '').toLowerCase();
   if (searchText != "") {
     for (var song in _list_song) {
      var title = song.title.toLowerCase();
-var artist = song.artist!.toLowerCase();
-var album = song.album!.toLowerCase();
+var artist = song.artist.toLowerCase();
+var album = song.album.toLowerCase();
+var gene = song.genre.toLowerCase();
       if (title.contains(searchText) ||
           artist.contains(searchText) ||
-          album.contains(searchText)
+          album.contains(searchText)||gene.contains(searchText)
           ) {
           
         showResults.add(song);
@@ -58,8 +59,9 @@ var album = song.album!.toLowerCase();
   @override
   void initState() {
     super.initState();
+    _searchResult.clear();
     _searchController = TextEditingController();
-    _list_song = Provider.of<SongProvier>(context, listen: false).getSongs();
+    _list_song = Provider.of<SongProvier>(context, listen: false).updatedSongs;
     _searchResult = List.of(_list_song);
   }
 

@@ -58,6 +58,9 @@ dependencies:
   flutter_custom_tab_bar: ^1.2.1
   glossy: ^0.0.4
   neopop: ^1.0.2
+  miniplayer: ^1.0.1
+  mini_music_visualizer: ^1.1.4
+  
   # music_visualizer: ^1.0.4
   
   
@@ -71,7 +74,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

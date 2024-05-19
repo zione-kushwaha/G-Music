@@ -15,6 +15,7 @@ import 'package:music/views/artist_detail_page.dart';
 import 'package:music/views/audio_player.dart';
 import 'package:music/views/custom_theme.dart';
 import 'package:music/views/equalizer_page.dart';
+import 'package:music/views/recent_playlist_page.dart';
 import 'package:music/views/search_screen.dart';
 import 'package:music/views/track_cutter.dart';
 import 'package:music/widgets/playlist_widget.dart';
@@ -147,6 +148,9 @@ class _MyAppState extends State<MyApp> {
         
                   case CustomTheme.routeName:
                   return createRoute(CustomTheme()); 
+
+                  case recent_played_songs.routeName:
+                  return createRoute(recent_played_songs());
         
                 default:
                   return null;

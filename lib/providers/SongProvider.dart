@@ -15,12 +15,14 @@ class song {
   String title;
   final String artist;
   final String album;
+  final String genre;
   final int albumId;
   final String uri;
 
   song(
       {required this.id,
       required this.title,
+      required this.genre,
       required this.artist,
       required this.album,
       required this.albumId,
@@ -57,6 +59,7 @@ class SongProvier extends ChangeNotifier {
             artist: e.artist ?? 'unknown',
             album: e.album ?? 'unknown',
             albumId: e.albumId!,
+            genre: e.genre ?? 'unknown',
             uri: e.uri!))
         .toList();
   }
@@ -457,5 +460,19 @@ final List<Map<String, dynamic>> rows = await databasehelper.queryTitleChangeRow
 // function that give list of song model when i give genre model
   List<SongModel> getGenreSongs(GenreModel genre) {
     return _songs.where((element) => element.genre == genre.genre).toList();
+  }
+
+  //function to get all the row of the recently played songs
+  Future<List<Map<String, dynamic>>> queryAllRows() async {
+    return await databasehelper.queryAllRows();
+  }
+  //funtion to delete all the row of the recently played songs
+  Future<void> deleteAll() async {
+    await databasehelper.deleteAll();
+    notifyListeners();
+  }
+  //funtion to get the no of row in the recently played songs
+  Future<int?> getRowCount() async {
+    return await databasehelper.getRowCount();
   }
 }

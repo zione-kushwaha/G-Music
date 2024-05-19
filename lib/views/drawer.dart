@@ -1,5 +1,7 @@
 // import 'package:audioplayers/audioplayers.dart';
+
 import 'package:flutter/material.dart';
+import 'package:mini_music_visualizer/mini_music_visualizer.dart';
 import 'package:music/views/custom_theme.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -22,16 +24,23 @@ class DrawerSection extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
-            decoration: BoxDecoration(
-              color: ui.ui_color,
-            ),
-            child: Text(
-              'Audio Player',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-              ),
-            ),
+            // decoration: BoxDecoration(
+            //   color: ui.ui_color,
+            // ),
+            
+            // child: Text(
+            //   'Audio Player',
+            //   style: TextStyle(
+            //     color: Colors.white,
+            //     fontSize: 24,
+            //   ),
+            // ),
+           child: MiniMusicVisualizer(
+            animate: true,
+  color: Colors.red,
+  width: 1,
+  height: 15,
+),
           ),
           ListTile(
             leading: Icon(

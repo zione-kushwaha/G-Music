@@ -57,19 +57,66 @@ await db.execute('''
   )
   ''');
 
+  // creation of the table for storing the facvourite song in the dataabase
+  await db.execute('''
+  CREATE TABLE IF NOT EXISTS favourite_songs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT,
+    artist TEXT,
+    album TEXT,
+    albumId INTEGER
+  )''');
+
     
   }
 
-//function to insert in the table recently played songs
- Future<int> insert(Map<String, dynamic> row) async {
-  Database? db = await instance.database;
-  var count = Sqflite.firstIntValue(await db!.rawQuery('SELECT COUNT(*) FROM recent_played_songs'));
-  if (count != null && count > 10) {
-    await db.delete('recent_played_songs', where: 'id = ?', whereArgs: [1]);
+  //function to insert in the table favourite songs
+  Future<int> insertFavourite(Map<String, dynamic> row) async {
+    Database? db = await instance.database;
+    return await db!.insert('favourite_songs', row);
   }
-  return await db.insert('recent_played_songs', row);
+  //function to query all the rows in the table favourite songs
+  Future<List<Map<String, dynamic>>> queryAllFavouriteRows() async {
+    Database? db = await instance.database;
+    return await db!.query('favourite_songs', orderBy: 'id DESC');
+  }
+  //function to delete a row in the table favourite songs
+  Future<int> deleteFavourite(int id) async {
+    Database? db = await instance.database;
+    return await db!.delete('favourite_songs', where: 'id = ?', whereArgs: [id]);
+  }
+
+//function to insert in the table recently played songs
+ //function to insert in the table recently played songs
+Future<int> insert(Map<String, dynamic> row) async {
+  Database? db = await instance.database;
+  
+  // Check if the song already exists
+  var existingSong = await db!.query('recent_played_songs', where: 'title = ? AND artist = ? AND album = ?', whereArgs: [row['title'], row['artist'], row['album']]);
+  if (existingSong.isNotEmpty) {
+    // If the song exists, delete it
+    await db.delete('recent_played_songs', where: 'id = ?', whereArgs: [existingSong.first['id']]);
+  }
+
+  // Insert the new song
+  int result = await db.insert('recent_played_songs', row);
+
+  // Check the total number of songs
+  var count = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM recent_played_songs'));
+  if (count != null && count > 30) {
+    // If the total number of songs exceeds 30, delete the oldest song
+    var oldestSong = await db.query('recent_played_songs', orderBy: 'id ASC', limit: 1);
+    await db.delete('recent_played_songs', where: 'id = ?', whereArgs: [oldestSong.first['id']]);
+  }
+
+  return result;
 }
 
+//funtion to delete all the rows in the table recently played songs
+Future<int> deleteAll() async {
+  Database? db = await instance.database;
+  return await db!.delete('recent_played_songs');
+}
   //function to query all the rows in the table recently played songs
   Future<List<Map<String, dynamic>>> queryAllRows() async {
     Database? db = await instance.database;
@@ -80,6 +127,12 @@ await db.execute('''
   Future<int> delete(int id) async {
     Database? db = await instance.database;
     return await db!.delete('recent_played_songs', where: 'id = ?', whereArgs: [id]);
+  }
+
+  //function to get the no of row in the table recently played songs
+  Future<int?> getRowCount() async {
+    Database? db = await instance.database;
+    return Sqflite.firstIntValue(await db!.rawQuery('SELECT COUNT(*) FROM recent_played_songs'));
   }
 
 

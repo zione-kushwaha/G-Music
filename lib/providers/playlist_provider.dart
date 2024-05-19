@@ -71,3 +71,4 @@ class playlistProvider extends ChangeNotifier {
     }
   }
 }
+
