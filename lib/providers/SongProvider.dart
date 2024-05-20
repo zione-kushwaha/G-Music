@@ -225,6 +225,7 @@ final List<Map<String, dynamic>> rows = await databasehelper.queryTitleChangeRow
     await    getSongTitleFromDatabaseByIds(currentSong.id);
   
       } else {
+        
         // If shuffling is not enabled, play the next song in the original order
         int currentIndex =
             _songs.indexWhere((element) => element.title == song.title);
