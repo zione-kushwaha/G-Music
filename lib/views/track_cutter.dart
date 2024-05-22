@@ -2,6 +2,14 @@ import 'dart:io';
 import 'package:easy_audio_trimmer/easy_audio_trimmer.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_audio_trimmer/flutter_audio_trimmer.dart';
+import 'package:music/constants.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:path/path.dart' as p;
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 
 class track_cutter extends StatelessWidget {
@@ -67,6 +75,7 @@ class AudioTrimmerView extends StatefulWidget {
 class _AudioTrimmerViewState extends State<AudioTrimmerView> {
   final Trimmer _trimmer = Trimmer();
 
+
   double _startValue = 0.0;
   double _endValue = 0.0;
 
@@ -91,26 +100,188 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
     });
   }
 
-  _saveAudio() {
-    setState(() {
-      _progressVisibility = true;
-    });
 
-    _trimmer.saveTrimmedAudio(
-      startValue: _startValue,
-      endValue: _endValue,
-      audioFileName: DateTime.now().millisecondsSinceEpoch.toString(),
-      onSave: (outputPath) {
+_saveAudio() async {
+  setState(() {
+    _progressVisibility = true;
+  });
+
+  // Generate a unique filename
+  String fileName = '${DateTime.now().millisecondsSinceEpoch}.mp3';
+
+  _trimmer.saveTrimmedAudio(
+    startValue: _startValue,
+    endValue: _endValue,
+    // Provide only the filename, not the path
+    audioFileName: fileName,
+    onSave: (outputPath) async {
+      setState(() {
+        _progressVisibility = false;
+      });
+
+      // Save the file to the Music directory
+      bool isSaved = await saveTrimmedAudio(outputPath.toString(), fileName);
+
+      if (isSaved) {
+        print('Audio successfully saved');
+        // Show a confirmation to the user
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Audio saved successfully!')),
+        );
+      } else {
+        print('Failed to save audio');
+        // Show an error message to the user
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save audio')),
+        );
+      }
+
+      // Delete the original file
+      await File(outputPath.toString()).delete();
+    },
+  );
+}
+
+Future<bool> saveTrimmedAudio(String path, String fileName) async {
+  try {
+    // Request storage permissions
+    if (await _requestPermission(Permission.storage)) {
+      final musicDirectoryPath = await _getMusicDirectoryPath();
+
+      // Ensure the directory exists
+      final directory = Directory(musicDirectoryPath);
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+      }
+
+      // Define the new path for the audio file
+      final newPath = '$musicDirectoryPath/$fileName';
+      print('New path for trimmed audio: $newPath');
+
+      // Copy the trimmed audio file to the new path
+      final file = await File(path).copy(newPath);
+      print('Saved trimmed audio to: ${file.path}');
+
+      // Confirm the file exists
+      if (await File(newPath).exists()) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      print('Storage permission denied');
+      return false;
+    }
+  } catch (e) {
+    print('Error saving trimmed audio: $e');
+    return false;
+  }
+}
+
+Future<bool> _requestPermission(Permission permission) async {
+  final status = await permission.request();
+  print('Permission status: $status');
+  return status == PermissionStatus.granted;
+}
+
+Future<String> _getMusicDirectoryPath() async {
+  if (Platform.isAndroid) {
+    if (await _isAndroid10OrAbove()) {
+      return await _getScopedStoragePath();
+    } else {
+      return await _getLegacyExternalStoragePath();
+    }
+  } else {
+    throw UnsupportedError('This platform is not supported');
+  }
+}
+
+Future<String> _getLegacyExternalStoragePath() async {
+  final directory = Directory('/storage/emulated/0/Music');
+  if (!await directory.exists()) {
+    await directory.create(recursive: true);
+  }
+  return directory.path;
+}
+
+Future<String> _getScopedStoragePath() async {
+  final directory = await getExternalStorageDirectory();
+  final scopedPath = directory!.parent!.parent!.parent!.path + '/Music';
+  print('Scoped storage path: $scopedPath');
+  return scopedPath;
+}
+
+Future<bool> _isAndroid10OrAbove() async {
+  return Platform.isAndroid && (await _getAndroidVersion()) >= 29;
+}
+
+Future<int> _getAndroidVersion() async {
+  final androidInfo = await DeviceInfoPlugin().androidInfo;
+  final sdkInt = androidInfo.version.sdkInt;
+  print('Android SDK version: $sdkInt');
+  return sdkInt;
+}
+
+
+
+// Future<void> saveToMusicDirectory(String path, String fileName) async {
+//   final byteData = await File(path).readAsBytes();
+
+//   final externalDir = await getExternalStoragePublicDirectory()
+//   final musicDirPath = '${externalDir!.path}/Music';
+
+//   // Ensure the directory exists
+//   final musicDir = Directory(musicDirPath);
+//   if (!await musicDir.exists()) {
+//     await musicDir.create(recursive: true);
+//   }
+
+//   final fullPath = '$musicDirPath/$fileName';
+
+//   final file = File(fullPath);
+//   await file.writeAsBytes(byteData, flush: true);
+
+//   debugPrint('Saved to Music directory: $fullPath');
+// }
+
+
+  File? _outputFile;
+  Future<void> _onTrimAudioFile(BuildContext context) async {
+    try {
+      if (widget.file != null) {
+        Directory directory = await getExternalStorageDirectories(type: StorageDirectory.music).then((value) => value!.first);
+
+        File? trimmedAudioFile = await FlutterAudioTrimmer.trim(
+          inputFile: widget.file,
+          outputDirectory: directory,
+          fileName: DateTime.now().millisecondsSinceEpoch.toString(),
+          fileType: Platform.isAndroid ? AudioFileType.mp3 : AudioFileType.m4a,
+          time: AudioTrimTime(
+            start: const Duration(seconds: 50),
+            end: const Duration(seconds: 100),
+          ),
+        );
         setState(() {
-          _progressVisibility = false;
+          _outputFile = trimmedAudioFile;
         });
-        debugPrint('OUTPUT PATH: $outputPath');
-      },
-    );
+      } else {
+        _showSnackBar('Select audio file for trim',context);
+      }
+    } on AudioTrimmerException catch (e) {
+      _showSnackBar(e.message,context);
+    } catch (e) {
+      _showSnackBar(e.toString(),context);
+    }
+  }
+
+  void _showSnackBar(String message,BuildContext context) {
+    SnackBar snackBar = SnackBar(content: Text(message));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
   Widget build(BuildContext context) {
+      final ui=Provider.of<Ui_changer>(context,listen: false);
     return WillPopScope(
       onWillPop: () async {
         if (Navigator.of(context).userGestureInProgress) {
@@ -120,9 +291,12 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: ui.ui_color,
         appBar: AppBar(
-          title: const Text("Audio Trimmer"),
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+          title: const Text("Audio Trimmer",style: TextStyle(color: Colors.white),),
+          backgroundColor: ui.ui_color,
         ),
         body: isLoading
             ? const CircularProgressIndicator()
@@ -142,7 +316,12 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
                       ),
                       ElevatedButton(
                         onPressed:
-                            _progressVisibility ? null : () => _saveAudio(),
+                            _progressVisibility ? null : () async =>await _saveAudio(),
+                          // onPressed: _progressVisibility ? null : () => _saveAudio(), 
+                          // onPressed: ()async{
+                          //  
+                          // },
+                        
                         child: const Text("SAVE"),
                       ),
                       // AudioViewer(trimmer: _trimmer),
@@ -161,10 +340,10 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
                             allowAudioSelection: true,
                             editorProperties: TrimEditorProperties(
                               circleSize: 10,
-                              borderPaintColor: Colors.pink,
+                              borderPaintColor: ui.ui_dark_color,
                               borderWidth: 4,
                               borderRadius: 5,
-                              circlePaintColor: Colors.pink.shade800,
+                              circlePaintColor: ui.ui_dark_color.withOpacity(0.8),
                             ),
                             areaProperties:
                                 TrimAreaProperties.edgeBlur(blurEdges: true),
@@ -172,10 +351,12 @@ class _AudioTrimmerViewState extends State<AudioTrimmerView> {
                             onChangeEnd: (value) => _endValue = value,
                             onChangePlaybackState: (value) {
                               if (mounted) {
-                                setState(() => _isPlaying = value);
+                                setState(() {
+                                   _isPlaying =value;
+                                   });
                               }
                             },
-                          ),
+                          )
                         ),
                       ),
                       TextButton(

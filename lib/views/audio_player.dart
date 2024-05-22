@@ -101,6 +101,9 @@ class _AudioPlayerssState extends State<AudioPlayerss> {
               return ListTile(
                 onTap: () {
                   if(provider.currentSong.id!=song.id){
+                    print('.............................................................');
+                    print(song.uri);
+                    print('.............................................................')  ;
                     provider.play_song(real);
                     Navigator.pushNamed(context, Individual_song.namedRoute);
                   }

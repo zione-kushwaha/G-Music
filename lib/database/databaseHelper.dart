@@ -66,8 +66,28 @@ await db.execute('''
     album TEXT,
     albumId INTEGER
   )''');
+// table for cut track song 
+  await db.execute('''
 
+  CREATE TABLE IF NOT EXISTS cut_track_songs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT,
+    artist TEXT,
+    album TEXT,
+    albumId INTEGER
+  )''');
     
+  }
+  //function to insert in the table cut track songs 
+  Future<int> insertCutTrack(Map<String, dynamic> row) async {
+    Database? db = await instance.database;
+    return await db!.insert('cut_track_songs', row);
+  }
+
+  //function to query all the rows in the table cut track songs
+  Future<List<Map<String, dynamic>>> queryAllCutTrackRows() async {
+    Database? db = await instance.database;
+    return await db!.query('cut_track_songs', orderBy: 'id DESC');
   }
 
   //function to insert in the table favourite songs

@@ -15,6 +15,7 @@ import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
 class song_detail extends StatefulWidget {
+  
   const song_detail({
     super.key,
   });
@@ -411,6 +412,7 @@ class _song_detailState extends State<song_detail> {
                   ListTile(
                     onTap: () async {
                       Navigator.pop(context);
+                      provider.stop_Song();
                       //code to cut the track
                       final filePath =
                           await LecleFlutterAbsolutePath.getAbsolutePath(

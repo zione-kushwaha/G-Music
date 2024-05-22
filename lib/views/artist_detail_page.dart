@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:music/constants.dart';
 import 'package:music/providers/SongProvider.dart';
+import 'package:music/providers/album_provider.dart';
 import 'package:music/views/search_screen.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
@@ -128,6 +129,7 @@ class _artist_detail_pageState extends State<artist_detail_page> {
                     onTap: () {
                       provider.play_song(song);
                       if (mounted) {
+                        print(song.uri);
                         Navigator.pushNamed(context, Individual_song.namedRoute);
                       }
                     },

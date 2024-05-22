@@ -45,6 +45,13 @@ class SongProvier extends ChangeNotifier {
   int playingSongId = 0;
   bool is_looping = false;
   bool is_shuffling = false;
+  bool isplayedfromAudio=true;
+
+  // funtion to toggle isplayedfromAudio
+  void toggleIsPlayedFromAudio() {
+    isplayedfromAudio = !isplayedfromAudio;
+    notifyListeners();
+  }
 
   //empty list of songs
   List<SongModel> _songs = [];
@@ -92,6 +99,7 @@ class SongProvier extends ChangeNotifier {
       await player.setAudioSource(AudioSource.uri(Uri.parse(song.uri!)));
 
       player.play();
+      
       Map<String, dynamic> row = {
         'title': song.title,
         'artist': song.artist,
@@ -248,7 +256,7 @@ final List<Map<String, dynamic>> rows = await databasehelper.queryTitleChangeRow
     try {
       if (is_shuffling) {
         // If shuffling is enabled, play a random song from the list
-        int randomIndex = Random().nextInt(_songs.length - 1);
+        int randomIndex = Random().nextInt(_songs.length-1);
         play_song(_songs[randomIndex]);
         playingSongId = _songs[randomIndex].albumId!;
         songTitle = await    getSongTitleFromDatabaseByIds(currentSong.id);
@@ -274,6 +282,7 @@ final List<Map<String, dynamic>> rows = await databasehelper.queryTitleChangeRow
   void loop_song() async {
     try {
       if (is_looping) {
+        
         player.setLoopMode(LoopMode.off);
         is_looping = false;
       } else {
