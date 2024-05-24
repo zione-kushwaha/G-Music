@@ -43,6 +43,7 @@ class _artist_detail_pageState extends State<artist_detail_page> {
           children: [
             Stack(
               children: [
+                 SizedBox(height: MediaQuery.of(context).size.height*0.045,),  
                 Container(
                   height: MediaQuery.of(context).size.height*0.26,
                   width: double.infinity,

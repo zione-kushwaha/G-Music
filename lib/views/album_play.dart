@@ -1,45 +1,195 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:io';
 
+import 'package:music/constants.dart';
+import 'package:music_visualizer/music_visualizer.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
-import 'package:glossy/glossy.dart';
-import 'package:music/views/audio_player.dart';
 import 'package:music/views/equalizer_page.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:music/constants.dart';
+
 import 'package:music/providers/SongProvider.dart';
 import 'package:music/providers/playlist_provider.dart';
 import 'package:music/views/track_cutter.dart';
 import 'package:lecle_flutter_absolute_path/lecle_flutter_absolute_path.dart';
-import 'package:music_visualizer/music_visualizer.dart';
-import 'package:on_audio_query/on_audio_query.dart';
-import 'package:provider/provider.dart';
 
-class song_detail extends StatefulWidget {
+import 'package:on_audio_query/on_audio_query.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
+
+
+class album_song extends StatelessWidget {
+ album_song({
+    super.key,
+  });
+  static const namedRoute = '/album_song';
+
+  var values = 0.0;
+  bool do_state_state=false;
+
+  @override
+  Widget build(BuildContext context) {
+    final ui = Provider.of<Ui_changer>(
+      context,
+    );
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+         gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [ui.ui_color, Colors.black.withOpacity(0.7)],  )
+        ),
+height: MediaQuery.of(context).size.height,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+               
+                SizedBox(height: 40,),
+                album_sound_volume(),
+                album_play_detail(),
+                
+                   
+                    
+                    
+              
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class album_sound_volume extends StatefulWidget {
+  const album_sound_volume({super.key,});
+
+  @override
+  State<album_sound_volume> createState() => _album_sound_volumeState();
+}
+
+class _album_sound_volumeState extends State<album_sound_volume> {
+  @override
+  Widget build(BuildContext context) { 
+    final provider = Provider.of<SongProvier>(context);
+    return  SfRadialGauge(
+          animationDuration: 1,
+          enableLoadingAnimation: true,
+          axes: [
+            RadialAxis( 
+              useRangeColorForAxis: true,
+              startAngle: 280,
+              endAngle: 150,
+              canRotateLabels: false,
+              interval: 0.1,
+              isInversed: false,
+              maximum: 1,
+              minimum: 0,
+              showAxisLine: true,
+              showLabels: true,
+              showTicks: true,
+              labelFormat: '{value}',
+              ranges: [
+                GaugeRange(
+                  startValue: 0,
+                  endValue: provider.sound_volume,
+                  color: Colors.red
+                )
+              ],
+              pointers: [
+                MarkerPointer(
+                  color: Colors.red,
+                  value: provider.sound_volume,
+                  onValueChanged: (newValue) {
+                    provider.change_volume(newValue);
+                  },
+                  enableAnimation: true,
+                  enableDragging: true,
+                  markerType: MarkerType.circle,
+                  markerWidth: 20,
+                  markerHeight: 20,
+                ),
+              ],
+              annotations: [
+                GaugeAnnotation(
+                  horizontalAlignment: GaugeAlignment.center,
+                  widget: NewWidget(provider: provider),
+                )
+              ],
+            ),
+          ],
+        );
+  }
+}
+
+class NewWidget extends StatelessWidget {
+  const NewWidget({
+    super.key,
+    required this.provider,
+  });
+
+  final SongProvier provider;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 200,
+      height: 200,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(200),
+      ),
+      child:ClipRRect(
+      borderRadius: BorderRadius.circular(200),
+      child: QueryArtworkWidget(
+        quality: 100,
+    artworkQuality: FilterQuality.high,
+    
+        artworkBorder: BorderRadius.circular(8),
+        artworkClipBehavior: Clip.antiAliasWithSaveLayer,
+       
+        artworkFit: BoxFit.cover,
+        nullArtworkWidget: ClipRRect(
+          borderRadius: BorderRadius.circular(200),
+          child: Image.asset('assets/images/cover.jpg', fit: BoxFit.cover),
+        ),
+        id:  provider.playingSongId,
+       keepOldArtwork: true,
+        type: ArtworkType.ALBUM,
+      ),
+    ),
+    );
+  }
+}
+
+
+
+
+
+class album_play_detail extends StatefulWidget {
   
-  const song_detail({
+  const album_play_detail({
     super.key,
   });
 
   @override
-  State<song_detail> createState() => _song_detailState();
+  State<album_play_detail> createState() => _album_play_detailState();
 }
 
-class _song_detailState extends State<song_detail> {
+class _album_play_detailState extends State<album_play_detail> {
  
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<SongProvier>(context,listen: false);
-    final ui = Provider.of<Ui_changer>(context,listen: false);
-    final playlistProviders = Provider.of<playlistProvider>(context,listen: false);
     return Column(
       children: [
-        GlossyContainer(
-          borderRadius: BorderRadius.circular(12),
-          height: MediaQuery.of(context).size.height * 0.15,
-          width: double.infinity,
+        Card(
+          color: white.withOpacity(0.4),
           child: Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
                 Row(
@@ -50,12 +200,13 @@ class _song_detailState extends State<song_detail> {
                     ),
                     Text(
                       '120 Play',
-                      style: TextStyle(fontSize: 12,color: white),
-                      
+                      style: TextStyle(fontSize: 12),
                     ),
                   ],
                 ),
-               
+                SizedBox(
+                  height: 10,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -63,9 +214,9 @@ class _song_detailState extends State<song_detail> {
                         child: FutureBuilder<String>(
           future: provider.getSongTitleFromDatabaseByIds(provider.currentSong.id), // replace with your method
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return Text('Loading...');
-                    } else {
+        } else {
           if (snapshot.hasError)
             return Text('Error: ${snapshot.error}');
           else{
@@ -73,16 +224,16 @@ class _song_detailState extends State<song_detail> {
             return Text(
               snapshot.data.toString(), // song title
               maxLines: 1,
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold,color: white),
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             );}
-                    }
+        }
           },
-                    )),
+        )),
                     IconButton(
                         onPressed: () {
                           buttomsheet(context, provider);
                         },
-                        icon: Icon(Icons.more_vert,color: white.withOpacity(0.7),))
+                        icon: Icon(Icons.more_vert))
                   ],
                 ),
                 Row(
@@ -93,7 +244,6 @@ class _song_detailState extends State<song_detail> {
                         maxLines: 1,
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey
                         ),
                       ),
                     ),
@@ -103,40 +253,156 @@ class _song_detailState extends State<song_detail> {
             ),
           ),
         ),
-    
-    SizedBox(
-      height: MediaQuery.of(context).size.height * 0.02,
-    ),
-    
+
+
+
         //play control
          Consumer<SongProvier>(
            builder: (context,Provider,child) {
              return Column(
                    children: [
               provider.isplaying?        Container(
-                  height: MediaQuery.of(context).size.height * 0.05,
+                  height: 50,
                   width: double.infinity,
                   child:  MusicVisualizer(
-                    barCount: 105,
+                    barCount: 30,
                     colors: [
-                          Colors.white,
-                           
+            Colors.white,
+             
                     
               
-                          Colors.orange,
+            Colors.orange,
               Color.fromARGB(255, 69, 5, 208),
                     Colors.red,
-                          ],
+            ],
                     duration: [900, 700, 600, 800, 500],
                 ),
-              ):Container(height:MediaQuery.of(context).size.height * 0.05,),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.02,
-              ),
-                Row(
+              ):Container(height: 50,),
+                     Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '${provider.currentTime}',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Expanded(
+                    child: Slider(
+                  value: provider.sliderValue,
+                  onChanged: (value) {
+                    provider.sliderValue = value;
+             
+                    provider.change_duration(value);
+                  },
+                  min: 0,
+                  max: provider.sliderMaxVAlue,
+                )),
+                Text(
+                  provider.totalTime,
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ],
+                     ),
+                     Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                InkWell(
+                    borderRadius: BorderRadius.circular(50),
+                    onTap: () {
+                      setState(() {
+                          provider.previous_song(provider.currentSong);
+                      });
+                    
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(12),
+                      child: CircleAvatar(
+                          radius: 30,
+                          child: SvgPicture.asset(
+                            'assets/icons/back.svg',
+                            width: 25,
+                          )),
+                    )),
+                SizedBox(
+                  width: 25,
+                ),
+               InkWell(
+                 borderRadius: BorderRadius.circular(50),
+                 onTap: () {
+                   provider.isplaying
+                       ? provider.pause_Song()
+                       : provider.resume_Song();
+                 },
+                 child: Container(
+                   padding: EdgeInsets.all(11),
+                   child: CircleAvatar(
+                     radius: 32,
+                     backgroundColor: Colors.red,
+                     child: provider.isplaying
+                         ? SvgPicture.asset(
+                             'assets/icons/pause.svg',
+                             width: 30,
+                           )
+                         : SvgPicture.asset(
+                             'assets/icons/play.svg',
+                             width: 30,
+                           ),
+                   ),
+                 ),
+               ),
+                SizedBox(
+                  width: 20,
+                ),
+                InkWell(
+                    borderRadius: BorderRadius.circular(50),
+                    onTap: () {
+                      setState(() {
+                        provider.next_song(provider.currentSong);
+                      });
+             
+                    },                  
+                    child: Container(
+                      padding: EdgeInsets.all(12),
+                      child: CircleAvatar(
+                          radius: 30,
+                          child: SvgPicture.asset(
+                            'assets/icons/next.svg',
+                            width: 25,
+                          )),
+                    )),
+              ],
+                     ),
+                     SizedBox(
+              height: MediaQuery.of(context).size.height * 0.01,
+                     ),
+                     Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                 IconButton(
+                InkWell(
+                    onTap: () {
+                      provider.shuffle_song();
+                    },
+                    borderRadius: BorderRadius.circular(35),
+                    child: Container(
+                        padding: EdgeInsets.all(3),
+                        child: SvgPicture.asset(
+                          'assets/icons/suffle.svg',
+                          width: 30,
+                          color: provider.is_shuffling ? Colors.red : Colors.white,
+                        ))),
+                InkWell(
+                  onTap: () {
+                    provider.loop_song();
+                  },
+                  borderRadius: BorderRadius.circular(35),
+                  child: Container(
+                      padding: EdgeInsets.all(3),
+                      child: SvgPicture.asset(
+                        'assets/icons/repeat.svg',
+                        width: 30,
+                        color: provider.is_looping ? Colors.red : Colors.white,
+                      )),
+                ),
+                IconButton(
                     onPressed: () {
                       Navigator.pushNamed(context, equalizer_page.routeName);
                     },
@@ -145,19 +411,6 @@ class _song_detailState extends State<song_detail> {
                       color: Colors.white,
                       size: 34,
                     )),
-                
-                IconButton(onPressed: (){
-                   playlist_bottom_sheet(playlistProviders, context
-                   );
-                }, icon: Icon(Icons.playlist_add,color: Colors.white,size: 34,)),
-                
-                IconButton(onPressed: (){}, icon: Icon(Icons.timer_outlined,color: Colors.white,size: 34,)),
-                IconButton(onPressed: (){
-               Navigator.pop(context);
-                }, icon: Icon(Icons.library_music,color: Colors.white,size: 34,)),
-                
-               
-               
                 InkWell(
                     
                     child: IconButton(
@@ -179,157 +432,7 @@ class _song_detailState extends State<song_detail> {
                           size: 34,
                         ))),
               ],
-                     ),
-                     Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Text(
-                //   '${provider.currentTime}',
-                //   style: TextStyle(fontWeight: FontWeight.bold,color: white),
-                // ),
-                IconButton(
-                  icon: Icon(Icons.replay_10,color: white,size: 34,),
-                  onPressed: () {
-                    
-                  },
-                ),
-               Expanded(
-  child: Align(
-    alignment: Alignment.center,
-    widthFactor:1.0,
-    child: Slider(
-      activeColor: white,
-      inactiveColor: Colors.grey,
-      value: provider.sliderValue,
-      onChanged: (value) {
-        provider.sliderValue = value;
-        provider.change_duration(value);
-      },
-      min: 0,
-      max: provider.sliderMaxVAlue,
-    ),
-  ),
-),
-
-                IconButton(
-                  icon: Icon(Icons.forward_10,color: white,size: 34,),
-                  onPressed: () {
-                    
-                  },
-                ),
-                
-              ],
-                     ),
-                     Row(
-                     
-                      children: [
-                        SizedBox(width: MediaQuery.of(context).size.width*0.1, ),
-                        Text(
-                  provider.currentTime,
-                  style: const TextStyle(fontSize: 12,color: white,fontWeight: FontWeight.bold),
-                ),
-                Expanded(child: Container()),
-                Text(
-                  provider.totalTime,
-                  style: const TextStyle(fontSize: 12,color: white,fontWeight: FontWeight.bold),
-                ),
-                 SizedBox(width: MediaQuery.of(context).size.width*0.1, ),
-                       
-                
-                      ],
-                     ),
-                    
-                     Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                //  InkWell(
-                //   onTap: () {
-                //     provider.loop_song();
-                //   },
-                //   borderRadius: BorderRadius.circular(35),
-                //   child: Container(
-                //       padding: EdgeInsets.all(3),
-                //       child: SvgPicture.asset(
-                //         'assets/icons/repeat.svg',
-                //         width: 30,
-                //         color: provider.is_looping ? Colors.red : Colors.white,
-                //       )),
-                // ),
-                IconButton(onPressed: (){
-                   provider.loop_song();
-                }, icon: Icon(Icons.repeat,color: provider.is_looping ? Colors.red : Colors.white,size: 34,) ),
-               InkWell(
-                    borderRadius: BorderRadius.circular(30),
-                    onTap: () {
-                      setState(() {
-                        provider.previous_song(provider.currentSong);
-                      });
-             
-                    },                  
-                    child: Container(
-                      padding: EdgeInsets.all(12),
-                      child: CircleAvatar(
-                          radius: 23,
-                          backgroundColor: ui.ui_color,
-                          child: SvgPicture.asset(
-                            'assets/icons/back.svg',
-                            width: 20,
-                            color: white,
-                          )),
-                    )),
-                
-               InkWell(
-                 borderRadius: BorderRadius.circular(30),
-                 onTap: () {
-                   provider.isplaying
-                       ? provider.pause_Song()
-                       : provider.resume_Song();
-                 },
-                 child: Container(
-                   padding: EdgeInsets.all(12),
-                   child: CircleAvatar(
-                     radius: 25,
-                     backgroundColor: Colors.red,
-                     child: provider.isplaying
-                         ? SvgPicture.asset(
-                             'assets/icons/pause.svg',
-                             width: 25,
-                           )
-                         : SvgPicture.asset(
-                             'assets/icons/play.svg',
-                             width: 25,
-                           ),
-                   ),
-                 ),
-               ),
-               
-                InkWell(
-                    borderRadius: BorderRadius.circular(50),
-                    onTap: () {
-                      setState(() {
-                        provider.next_song(provider.currentSong);
-                      });
-             
-                    },                  
-                    child: Container(
-                      padding: EdgeInsets.all(12),
-                      child: CircleAvatar(
-                          backgroundColor: ui.ui_color,
-                          radius: 23,
-                          child: SvgPicture.asset(
-                            'assets/icons/next.svg',
-                            width: 20,
-                            color: white,
-                          )),
-                    )),
-                    IconButton(onPressed: (){
-                   provider.shuffle_song();
-                }, icon: Icon(Icons.shuffle,color: provider.is_shuffling ? Colors.red : Colors.white,size: 34,) ),
-              
-              ],
-                     ),
-                    
-                    
+                     )
                    ],
                  );
            }

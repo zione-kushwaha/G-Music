@@ -14,7 +14,7 @@ const Color white = Color(0xFFFFFFFF);
 // provider for the app ui color change
 class Ui_changer extends ChangeNotifier {
    Color _ui_color=  Color(0xff3f1b53);
- Color _ui_dark_color= Color.fromARGB(255, 3, 77, 169);
+ Color _ui_dark_color= Color.fromARGB(255, 67, 3, 169);
  late Color temp;
  late int index_temp;
 void someFunction(int index) {

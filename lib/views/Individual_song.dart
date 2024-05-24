@@ -33,7 +33,15 @@ class Individual_song extends StatelessWidget {
          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [ui.ui_color, Colors.black.withOpacity(0.7)],  )
+            
+  colors: [
+    Color(0xFF9F6A50), 
+   
+  ui.ui_color, // Fully transparent
+    ui.ui_color.withOpacity(0.9), // Fully opaque
+    
+  ],
+             )
         ),
 height: MediaQuery.of(context).size.height,
         child: Padding(
@@ -41,41 +49,10 @@ height: MediaQuery.of(context).size.height,
           child: SingleChildScrollView(
             child: Column(
               children: [
-                // Container(
-                //   margin: EdgeInsets.only(top: 30),
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //     children: [
-                //       Container(
-                //         width: 40,
-                //         height: 35,
-                        
-                //         padding: EdgeInsets.all(10),
-                //         decoration: BoxDecoration(
-                //           color: const Color(0xFF023047),
-                //           borderRadius: BorderRadius.circular(10),
-                //         ),
-                //         child: Center(
-                //           child: SvgPicture.asset('assets/icons/back_page.svg'),
-                //         ),
-                //       ),
-                //       Container(
-                //         width: 40,
-                //         height: 35,
-                //         padding: EdgeInsets.all(10),
-                //         decoration: BoxDecoration(
-                //           color: const Color(0xFF023047),
-                //           borderRadius: BorderRadius.circular(10),
-                //         ),
-                //         child: Center(
-                //           child: SvgPicture.asset('assets/icons/setting.svg'),
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
+               
                 SizedBox(height: 40,),
                 soundVolume(),
+                 SizedBox(height: 15),
                 song_detail(),
                 
                    

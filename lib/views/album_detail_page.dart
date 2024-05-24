@@ -4,6 +4,7 @@ import 'dart:ui';
 
 
 import 'package:flutter/material.dart';
+import 'package:glossy/glossy.dart';
 
 import 'package:music/providers/SongProvider.dart';
 import 'package:music/constants.dart';
@@ -42,7 +43,15 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [ui.ui_color, Colors.black.withOpacity(0.7)],)
+            // colors: [ui.ui_color, Colors.black.withOpacity(0.7)
+             colors: [
+    Color(0xFF9F6A50), 
+   
+  ui.ui_color, // Fully transparent
+    ui.ui_color.withOpacity(0.9), // Fully opaque
+    
+  ],
+            )
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,43 +59,42 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
           SizedBox(height: MediaQuery.of(context).size.height*0.045,),  
             Stack(
               children: [
-                Positioned(
-                  top: 10,
-                  child: Container(
-                    height: 190,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    width: MediaQuery.of(context).size.width,
-                    child: QueryArtworkWidget(id: widget.album.id, type: ArtworkType.ALBUM, artworkFit: BoxFit.cover),
-                  ),
-                ),
-                
-                BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                  child: Container(
-                    height: MediaQuery.of(context).size.height*0.26,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Spacer(),
-                        Text(
-                         
-                          widget.album.album,maxLines: 1,style: TextStyle(color: white,fontSize: 15,fontWeight: FontWeight.bold),),
-                        Text(widget.album.artist!,maxLines: 1,style: TextStyle(color: white.withOpacity(0.7),fontSize: 12,),),
-                        
-                     SizedBox(height: 10,),
-               ] ),
-                    ),),
-                  ),
-                
-               Positioned(
+                 Positioned(
+            top: 10,
+            child: Container(
+              height: MediaQuery.of(context).size.height*0.26,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              width: MediaQuery.of(context).size.width,
+              child: QueryArtworkWidget(id: widget.album.id, type: ArtworkType.ALBUM, artworkFit: BoxFit.cover),
+            ),
+                            ),
+                            
+                            BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 2, sigmaY: 3),
+            child: Container(
+              height: MediaQuery.of(context).size.height*0.26,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Center(child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Spacer(),
+                  Text(
+                   
+                    widget.album.album,maxLines: 1,style: TextStyle(color: white,fontSize: 15,fontWeight: FontWeight.bold),),
+                  Text(widget.album.artist!,maxLines: 1,style: TextStyle(color: white.withOpacity(0.7),fontSize: 12,),),
+                  
+               SizedBox(height: 10,),
+                           ] ),
+              ),),
+            ),
+            Positioned(
                 right: 10,
                  child: IconButton(onPressed: (){
                    Navigator.pushNamed(context, SearchScreen.routeName);
@@ -97,7 +105,56 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
                 left: 10,
                 child: IconButton(onPressed: (){
                   Navigator.pop(context);
-                }, icon: Icon(Icons.arrow_back,color: Colors.white,size: 30,)))               
+                }, icon: Icon(Icons.arrow_back,color: Colors.white,size: 30,)))  ,
+              //   Container(
+              //     height: MediaQuery.of(context).size.height*0.26,
+              //     width: double.infinity,
+              //     decoration: BoxDecoration(
+              //       color: Colors.black.withOpacity(0.5),
+              //       borderRadius: BorderRadius.circular(20),
+              //     ),
+                
+              //  child: QueryArtworkWidget(
+              //     quality: 100,
+              //     artworkBorder: BorderRadius.circular(20),
+              //     artworkClipBehavior: Clip.antiAliasWithSaveLayer,
+              //     artworkFit: BoxFit.cover,
+              //     nullArtworkWidget: Container(
+              //       decoration: BoxDecoration(
+              //         color: Colors.black.withOpacity(0.5),
+              //         borderRadius: BorderRadius.circular(20),
+              //       ),
+              //       child: Center(
+              //         child: Icon(
+              //           Icons.music_note,
+              //           color: Colors.white,
+              //           size: 40,
+              //         ),
+              //       ),
+              //     ),
+              //     id: widget.album.id,
+              //     type: ArtworkType.ALBUM,   
+              //   ),),
+                Container(
+                  height: MediaQuery.of(context).size.height*0.26,
+                  width: double.infinity,
+                  // decoration: BoxDecoration(
+                  //   color: Colors.black.withOpacity(0.5),
+                  //   borderRadius: BorderRadius.circular(20),
+                  // ),
+                  child: Center(child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Spacer(),
+                      Text(
+                       
+                        widget.album.album,maxLines: 1,style: TextStyle(color: white,fontSize: 15,fontWeight: FontWeight.bold),),
+                      Text(widget.album.artist!,maxLines: 1,style: TextStyle(color: white.withOpacity(0.7),fontSize: 12,),),
+                      
+                   SizedBox(height: 10,),
+                               ] ),
+                  ),),
               ],
             ),
             Container(

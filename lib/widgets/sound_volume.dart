@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:glossy/glossy.dart';
+import 'package:music/constants.dart';
 import 'package:music/providers/SongProvider.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
@@ -15,53 +17,69 @@ class _soundVolumeState extends State<soundVolume> {
   @override
   Widget build(BuildContext context) { 
     final provider = Provider.of<SongProvier>(context);
-    return  SfRadialGauge(
-          animationDuration: 1,
-          enableLoadingAnimation: true,
-          axes: [
-            RadialAxis( 
-              useRangeColorForAxis: true,
-              startAngle: 280,
-              endAngle: 150,
-              canRotateLabels: false,
-              interval: 0.1,
-              isInversed: false,
-              maximum: 1,
-              minimum: 0,
-              showAxisLine: true,
-              showLabels: true,
-              showTicks: true,
-              labelFormat: '{value}',
-              ranges: [
-                GaugeRange(
-                  startValue: 0,
-                  endValue: provider.sound_volume,
-                  color: Colors.red
-                )
-              ],
-              pointers: [
-                MarkerPointer(
-                  color: Colors.red,
-                  value: provider.sound_volume,
-                  onValueChanged: (newValue) {
-                    provider.change_volume(newValue);
-                  },
-                  enableAnimation: true,
-                  enableDragging: true,
-                  markerType: MarkerType.circle,
-                  markerWidth: 20,
-                  markerHeight: 20,
+    final ui=Provider.of<Ui_changer>(context);
+    return  GlossyContainer(
+     
+       borderRadius: BorderRadius.circular(12),
+      height: MediaQuery.of(context).size.height*0.35,
+      width: MediaQuery.of(context).size.width*0.9,
+       child: Container(
+        padding: EdgeInsets.only(bottom: 15),
+         child: SfRadialGauge(
+              animationDuration: 1,
+              enableLoadingAnimation: true,
+              axes: [
+                RadialAxis( 
+                  useRangeColorForAxis: true,
+                  startAngle: 280,
+                  endAngle: 150,
+                  canRotateLabels: false,
+                  interval: 0.1,
+                  isInversed: false,
+                  maximum: 1,
+                  minimum: 0,
+                  showAxisLine: true,
+                  showLabels: true,
+                  showTicks: true,
+                  labelFormat: '{value}',
+                  ranges: [
+                    GaugeRange(
+                      startValue: 0,
+                      endValue: 1,
+                      color: white
+                    ),
+                    GaugeRange(
+               startValue: provider.sound_volume,
+               endValue: 1,
+               color: Colors.grey
+          )
+                  ],
+                  pointers: [
+                    MarkerPointer(
+                      color: white,
+                      value: provider.sound_volume,
+                      onValueChanged: (newValue) {
+                        provider.change_volume(newValue);
+                      },
+                      enableAnimation: true,
+                      enableDragging: true,
+                      markerType: MarkerType.circle,
+                      markerWidth: 20,
+                      markerHeight: 20,
+                    ),
+                  ],
+                  annotations: [
+                    GaugeAnnotation(
+                     
+                      horizontalAlignment: GaugeAlignment.center,
+                      widget: NewWidget(provider: provider),
+                    )
+                  ],
                 ),
               ],
-              annotations: [
-                GaugeAnnotation(
-                  horizontalAlignment: GaugeAlignment.center,
-                  widget: NewWidget(provider: provider),
-                )
-              ],
             ),
-          ],
-        );
+       ),
+    );
   }
 }
 
@@ -76,8 +94,8 @@ class NewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 200,
-      height: 200,
+      width: MediaQuery.of(context).size.height*0.20,
+      height:MediaQuery.of(context).size.height*0.2,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(200),
       ),
